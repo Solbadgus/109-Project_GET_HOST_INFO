@@ -7,7 +7,7 @@
 
 #include <Arduino.h>
 #include <Timer.h>
-
+#include <Arduino_JSON.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 
@@ -21,42 +21,69 @@ Timer t500ms;
 void get_web_info()
 {
   // wait for WiFi connection
-  if ((WiFiMulti.run() == WL_CONNECTED)) {
+  if ((WiFiMulti.run() == WL_CONNECTED)) 
+  {
 
     WiFiClient client;
 
     HTTPClient http;
 
-    Serial.print("[HTTP] begin...\n");
-    if (http.begin(client, "http://192.168.4.101/data.json")) {  // HTTP
+    //Serial.print("[HTTP] begin...\n");
+    if (http.begin(client, "http://192.168.4.101/data.json")) 
+    {  // HTTP
 
 
-      Serial.print("[HTTP] GET...\n");
-      // start connection and send HTTP header
+      //Serial.print("[HTTP] GET...\n");
       int httpCode = http.GET();
 
       // httpCode will be negative on error
-      if (httpCode > 0) {
+      if (httpCode > 0) 
+      {
         // HTTP header has been send and Server response header has been handled
-        Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+        //Serial.printf("[HTTP] GET... code: %d\n", httpCode);
 
         // file found at server
-        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY)
+        {
           String payload = http.getString();
-          Serial.println(payload);
+          //Serial.println(payload);  
+          payload.replace("[","");
+          payload.replace("]","");
+          payload.replace("{","");
+          payload.replace("}","");
+          payload.replace(":",",");
+          payload.replace("\"","");
+          payload.trim();
+          payload+=",";
+          payload.replace("ttime_m","Am");
+          payload.replace("ttime_s","As");
+          payload.replace("stime_m","Bm");
+          payload.replace("stime_s","Bs");
+          payload.replace("nstate","C");
+          payload.replace("ftime","D");
+          payload.replace("ptime","E");
+          //Serial.println(payload);
+          Serial.print(payload);
         }
-      } else {
+      } 
+      
+      else 
+      
+      {
         Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
       }
 
       http.end();
-    } else {
+    }
+    else 
+    {
       Serial.printf("[HTTP} Unable to connect\n");
     }
   }
 }
 
-void setup() {
+void setup() 
+{
 
   Serial.begin(115200);
   // Serial.setDebugOutput(true);
@@ -78,6 +105,7 @@ void setup() {
 
 }
 
-void loop() {
+void loop() 
+{
   t500ms.update();
 }
