@@ -51,7 +51,8 @@ void get_web_info()
           payload.replace("]","");
           payload.replace("{","");
           payload.replace("}","");
-          payload.replace(":",",");
+          //payload.replace(":",",");
+          payload.replace(":","");
           payload.replace("\"","");
           payload.trim();
           payload+=",";
@@ -63,7 +64,7 @@ void get_web_info()
           payload.replace("ftime","D");
           payload.replace("ptime","E");
           //Serial.println(payload);
-          Serial.print(payload);
+          Serial.println(payload);
         }
       } 
       
@@ -98,7 +99,7 @@ void setup()
     Serial.flush();
     delay(1000);
   }
-  t500ms.every(500,get_web_info);
+  t500ms.every(1000,get_web_info);
   WiFi.mode(WIFI_STA);
   WiFi.config(IPAddress(192,168,4,102),IPAddress(192,168,4,254),IPAddress(255,255,255,0));//固定IP
   WiFiMulti.addAP("ESP8266_AP", "@Aass_esp8266");
